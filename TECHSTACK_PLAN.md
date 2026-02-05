@@ -1,4 +1,4 @@
-# Tech Stack Plan
+# Tech Stack Plan TUI
 
 ## Language
 - **Golang**
