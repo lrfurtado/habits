@@ -7,7 +7,7 @@
   - Weekday schedule
   - Weekend schedule
 - Day window:
-  - Start: `06:30`
+  - Start: `11:30`
   - End: `18:00` (hard stop)
 
 ## 2. Pomodoro System
@@ -25,18 +25,21 @@
   - When the next activity starts, previous reminders are suppressed.
   - Previous activity is marked **not done**.
 
-## 4. Voice Alerts
+## 4. Notification Model
 - Alert types:
   - Short alert sounds
+  - Funny recorded youtube short clip
   - Spoken contextual messages (especially for reminders)
 - Voice model: Same voice, different phrasing per event.
 - Quiet hours: Configurable quiet / do-not-disturb blocks.
-
-## 5. macOS Notifications
 - Notification scope: Selective (not all alerts, not only critical).
 - Actions supported: Actionable buttons (for example: Ack, Snooze, Skip).
 - Repeat behavior: Repeat notifications with a limit until acknowledged.
-
+## 5. Notification model implementation details
+- this module should be runnable as a external python script
+- because of possible youtube integration this module needs to be in python
+- for communicating with it lets json rpc over strio
+- this module on its own should be able to act as a mcp server
 ## 6. Acknowledgement Model
 - Acknowledgement requirement: Mixed / configurable per activity.
 - Quick actions:
@@ -45,6 +48,7 @@
 - Snooze behavior:
   - Temporary only
   - Does not shift the schedule
+- implement this model on the TUI itself
 
 ## 7. TUI (Terminal UI) Experience
 - Main dashboard includes:
