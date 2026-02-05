@@ -1,53 +1,27 @@
-# Follow-up Questions
+# Follow-up Questions (Implementation Clarifications)
 
-## Schedule & Workflow
-1. Do you want fixed-time activities only, or also flexible blocks that can shift automatically?
-2. Should overlapping activities be allowed or always prevented?
-3. Do you prefer planning one day at a time, or using reusable templates?
-4. What is your typical day start/end window?
+## Schedule Details
+1. How should activities be entered for weekday/weekend templates (manual TUI form, editable config file, or both)?
+2. If an activity runs past the hard stop at 18:00, should it be force-stopped immediately at 18:00 or allowed to finish silently but marked as overrun?
 
-## Pomodoro Preferences
-5. What default focus/break lengths do you want (e.g., 25/5, 50/10)?
-6. Should pomodoro settings be global or customizable per activity?
-7. Do you want long breaks after a certain number of focus sessions?
+## Reminder & Escalation Rules
+3. What exact escalation cadence should be used after a missed acknowledgement (for example every 1 min for first 5 min, then every 30s)?
+4. Should escalation affect only reminder frequency, or also sound intensity/volume?
+5. For "repeat notifications with a limit," what should the numeric limit be?
 
-## Reminder Behavior
-8. How many pre-start reminders should be supported by default?
-9. If you do not acknowledge, should reminders continue indefinitely or stop after a threshold?
-10. What escalation pattern feels acceptable (frequency/volume/message tone)?
-11. Should reminders be suppressed while you are in another active activity?
+## Acknowledgement Actions
+6. For Snooze, what duration options are allowed (fixed values like 1/3/5 min, or customizable)?
+7. When Skip is used, should the activity be marked not done immediately and all related reminders cancelled?
+8. Should end-of-activity acknowledgement remain required when start acknowledgement was skipped?
 
-## Voice Alerts
-12. Do you want short alerts only, or spoken contextual messages?
-13. Should different events use different voices or same voice with different phrasing?
-14. Any quiet hours or do-not-disturb periods to enforce automatically?
+## Pomodoro Execution
+9. During breaks, should reminders still run for the *next scheduled activity* if it overlaps with break timing?
+10. If a new scheduled activity starts mid-focus session, should the focus session be cut immediately or allowed to complete first?
 
-## macOS Notifications
-15. Should notifications mirror every voice alert, or only critical events?
-16. Do you need actionable notification buttons (e.g., Snooze, Ack) if supported?
-17. Is repeated macOS renotification required until acknowledgement?
+## Voice & Quiet Hours
+11. Should quiet hours mute both sound alerts and speech, or only speech?
+12. During quiet hours, should macOS notifications still appear normally?
 
-## Acknowledgement Model
-18. Should start/end acknowledgement be mandatory or optional per activity?
-19. What quick actions should exist besides Ack (snooze, skip, defer, extend)?
-20. When snoozing, should schedule times shift automatically?
-
-## TUI Experience
-21. What matters most on the main dashboard (timer, progress, next tasks, overdue count)?
-22. Do you prefer vim-like keybindings, simple arrows, or configurable keys?
-23. Should the interface be minimal monochrome or color-coded status-heavy?
-
-## Data, History, and Reporting
-24. How long should history be retained?
-25. Which metrics matter most: completion rate, deep-focus minutes, missed acknowledgements, or interruptions?
-26. Do you want CSV/JSON export from day/weekly summaries?
-
-## Reliability & Edge Cases
-27. On app restart, should timers resume from wall clock time or from paused state?
-28. How should missed activities be handled (auto-skip, reschedule, prompt)?
-29. Should timezone changes be considered for travel or remote work?
-
-## Future Scope
-30. Do you eventually want calendar integration (Apple/Google), or keep it standalone?
-31. Any interest in habit streak tracking beyond daily schedule adherence?
-32. Would you want optional ambient sounds or focus music triggers later?
+## TUI & Reporting
+13. Do you want a dedicated "Today timeline" panel in the dashboard, or keep the dashboard compact and single-pane?
+14. Should JSON exports be generated automatically at end-of-day/week, or only on manual command?
