@@ -16,6 +16,7 @@
 - Long break: `20` minutes after every `3` focus sessions.
 
 ## 3. Reminder Behavior
+- Ownership: Reminder timing/escalation policy is owned by the TUI/application core, not the notification module.
 - Pre-start reminders: `1` reminder, `5` minutes before start.
 - Unacknowledged reminders: Continue indefinitely until acknowledged.
 - Escalation:
@@ -26,6 +27,12 @@
   - Previous activity is marked **not done**.
 
 ## 4. Notification Model
+- Module responsibility: The notification module is responsible only for delivering notifications.
+- Module boundaries:
+  - No Pomodoro concepts.
+  - No timer/session-state logic.
+  - No schedule decision-making.
+  - No completion or task-status decisions.
 - Alert types:
   - Short alert sounds
   - Funny recorded youtube short clip
@@ -40,6 +47,8 @@
 - because of possible youtube integration this module needs to be in python
 - for communicating with it lets json rpc over strio
 - this module on its own should be able to act as a mcp server
+- The module only executes explicit notification requests from other components.
+- Any timing, Pomodoro cadence, escalation policy selection, and suppression decisions are handled outside this module.
 ## 6. Acknowledgement Model
 - Acknowledgement requirement: Mixed / configurable per activity.
 - Quick actions:
@@ -49,6 +58,7 @@
   - Temporary only
   - Does not shift the schedule
 - implement this model on the TUI itself
+- Notification actions are surfaced by the notification module, but action semantics are resolved by the TUI/application core.
 
 ## 7. TUI (Terminal UI) Experience
 - Main dashboard includes:

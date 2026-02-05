@@ -41,13 +41,10 @@
 - **Execution model:** fetch clip URL/stream metadata with `yt-dlp`, then play through `python-vlc`.
 - **Reasoning:** robust handling of YouTube short clips required by spec.
 
-### Scheduling, Repeats, and Escalation
-- **Scheduler:** `APScheduler`
-- **Usage:**
-  - pre-start reminder at T-5m
-  - repeated reminder jobs until acknowledgement
-  - escalation cadence changes over time
-  - suppression when next activity starts
+### Notification Delivery Scope
+- The Python module is a delivery engine only: render and dispatch notifications requested by the Go app.
+- It does **not** own Pomodoro cadence, timer progression, schedule logic, or suppression policy decisions.
+- If retries/escalation are used, they are passed in as explicit per-notification policy from the Go app.
 
 ### Suggested Python Dependency Set
 ```txt
@@ -62,15 +59,12 @@ pydantic
 ```
 
 ### Integration Contract with Go TUI
-- Go process is the source of truth for schedule/timer state.
-- Python notification process receives events/commands over JSON-RPC stdio, for example:
-  - `schedule_reminder(activity_id, starts_at, policy)`
-  - `cancel_activity(activity_id)`
-  - `ack(activity_id)`
-  - `snooze(activity_id, duration_minutes)`
-  - `skip(activity_id)`
-- Python process emits JSON-RPC notifications/events back:
-  - `reminder_fired`
-  - `ack_timeout`
+- Go process is the source of truth for Pomodoro, schedule, timer, and activity state.
+- Python notification process receives delivery-oriented commands over JSON-RPC stdio, for example:
+  - `notify(event_id, channel_payload, actions, retry_policy)`
+  - `cancel_notification(event_id)`
+  - `set_quiet_hours(policy)`
+- Python process emits delivery/action events back:
+  - `notification_sent`
+  - `notification_failed`
   - `action_selected`
-  - `notification_error`
