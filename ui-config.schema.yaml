@@ -1,0 +1,306 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://example.local/schemas/ui-config.schema.yaml"
+title: "Habits TUI Configuration Schema"
+description: >-
+  YAML schema for validating UI-facing configuration of the fixed-schedule
+  focus/reminder system.
+type: object
+additionalProperties: false
+required:
+  - schedule_templates
+  - day_window
+  - pomodoro
+  - reminders
+  - notifications
+  - acknowledgements
+  - dashboard
+  - keybindings
+  - visual
+properties:
+  schedule_templates:
+    type: object
+    additionalProperties: false
+    required: [weekday, weekend]
+    properties:
+      weekday:
+        $ref: "#/$defs/activity_list"
+      weekend:
+        $ref: "#/$defs/activity_list"
+
+  day_window:
+    type: object
+    additionalProperties: false
+    required: [start, end, hard_stop]
+    properties:
+      start:
+        $ref: "#/$defs/time_hhmm"
+      end:
+        $ref: "#/$defs/time_hhmm"
+      hard_stop:
+        type: boolean
+        const: true
+
+  pomodoro:
+    type: object
+    additionalProperties: false
+    required:
+      - focus_minutes
+      - short_break_minutes
+      - long_break_minutes
+      - long_break_every_focus_sessions
+      - scope
+    properties:
+      focus_minutes:
+        type: integer
+        minimum: 1
+        default: 25
+      short_break_minutes:
+        type: integer
+        minimum: 1
+        default: 5
+      long_break_minutes:
+        type: integer
+        minimum: 1
+        default: 20
+      long_break_every_focus_sessions:
+        type: integer
+        minimum: 1
+        default: 3
+      scope:
+        type: string
+        enum: [global]
+        default: global
+
+  reminders:
+    type: object
+    additionalProperties: false
+    required:
+      - pre_start
+      - unacknowledged_behavior
+      - escalation
+      - suppression
+    properties:
+      pre_start:
+        type: object
+        additionalProperties: false
+        required: [count, minutes_before_start]
+        properties:
+          count:
+            type: integer
+            minimum: 1
+            default: 1
+          minutes_before_start:
+            type: integer
+            minimum: 1
+            default: 5
+      unacknowledged_behavior:
+        type: object
+        additionalProperties: false
+        required: [repeat_indefinitely]
+        properties:
+          repeat_indefinitely:
+            type: boolean
+            default: true
+      escalation:
+        type: object
+        additionalProperties: false
+        required: [enabled, frequency_increase, wording_variation]
+        properties:
+          enabled:
+            type: boolean
+            default: true
+          frequency_increase:
+            type: string
+            enum: [none, mild, moderate, aggressive]
+            default: moderate
+          wording_variation:
+            type: boolean
+            default: true
+      suppression:
+        type: object
+        additionalProperties: false
+        required: [on_next_activity_start, mark_previous_not_done]
+        properties:
+          on_next_activity_start:
+            type: boolean
+            default: true
+          mark_previous_not_done:
+            type: boolean
+            default: true
+
+  notifications:
+    type: object
+    additionalProperties: false
+    required:
+      - alert_types
+      - voice
+      - quiet_hours
+      - scope
+      - actions
+      - repeat
+    properties:
+      alert_types:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          type: string
+          enum:
+            - short_sound
+            - youtube_clip
+            - spoken_contextual
+      voice:
+        type: object
+        additionalProperties: false
+        required: [voice_id, vary_phrasing_by_event]
+        properties:
+          voice_id:
+            type: string
+            minLength: 1
+          vary_phrasing_by_event:
+            type: boolean
+            default: true
+      quiet_hours:
+        type: array
+        default: []
+        items:
+          type: object
+          additionalProperties: false
+          required: [start, end]
+          properties:
+            start:
+              $ref: "#/$defs/time_hhmm"
+            end:
+              $ref: "#/$defs/time_hhmm"
+      scope:
+        type: string
+        enum: [selective]
+        default: selective
+      actions:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          type: string
+          enum: [ack, snooze, skip]
+      repeat:
+        type: object
+        additionalProperties: false
+        required: [until_acknowledged, max_repeats]
+        properties:
+          until_acknowledged:
+            type: boolean
+            default: true
+          max_repeats:
+            oneOf:
+              - type: integer
+                minimum: 1
+              - type: string
+                enum: [unbounded]
+
+  acknowledgements:
+    type: object
+    additionalProperties: false
+    required: [mode, quick_actions, snooze]
+    properties:
+      mode:
+        type: string
+        enum: [global, per_activity]
+        description: Use per_activity to make ack requirement configurable per activity.
+      quick_actions:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+          enum: [snooze, skip]
+      snooze:
+        type: object
+        additionalProperties: false
+        required: [temporary_only, shifts_schedule]
+        properties:
+          temporary_only:
+            type: boolean
+            const: true
+          shifts_schedule:
+            type: boolean
+            const: false
+
+  dashboard:
+    type: object
+    additionalProperties: false
+    required: [widgets]
+    properties:
+      widgets:
+        type: array
+        uniqueItems: true
+        minItems: 4
+        allOf:
+          - contains:
+              const: current_timer
+          - contains:
+              const: day_progress
+          - contains:
+              const: next_activity
+          - contains:
+              const: overdue_missed_count
+        items:
+          type: string
+          enum:
+            - current_timer
+            - day_progress
+            - next_activity
+            - overdue_missed_count
+
+  keybindings:
+    type: object
+    additionalProperties: false
+    required: [style, mappings]
+    properties:
+      style:
+        type: string
+        enum: [vim_like]
+      mappings:
+        type: object
+        description: 'Map actions to keys (e.g., ack: "a", snooze: "s").'
+        additionalProperties:
+          type: string
+          minLength: 1
+
+  visual:
+    type: object
+    additionalProperties: false
+    required: [color_coded, status_heavy]
+    properties:
+      color_coded:
+        type: boolean
+        const: true
+      status_heavy:
+        type: boolean
+        const: true
+
+$defs:
+  time_hhmm:
+    type: string
+    pattern: "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+  activity:
+    type: object
+    additionalProperties: false
+    required: [id, title, start, end]
+    properties:
+      id:
+        type: string
+        minLength: 1
+      title:
+        type: string
+        minLength: 1
+      start:
+        $ref: "#/$defs/time_hhmm"
+      end:
+        $ref: "#/$defs/time_hhmm"
+      requires_ack:
+        type: boolean
+        default: true
+  activity_list:
+    type: array
+    items:
+      $ref: "#/$defs/activity"

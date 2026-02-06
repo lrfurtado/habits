@@ -1,0 +1,80 @@
+schedule_templates:
+  weekday:
+    - id: deep_work_1
+      title: Deep Work
+      start: "11:30"
+      end: "12:55"
+      requires_ack: true
+    - id: admin
+      title: Admin
+      start: "13:00"
+      end: "13:30"
+      requires_ack: false
+  weekend:
+    - id: review
+      title: Weekly Review
+      start: "11:30"
+      end: "12:00"
+
+day_window:
+  start: "11:30"
+  end: "18:00"
+  hard_stop: true
+
+pomodoro:
+  focus_minutes: 25
+  short_break_minutes: 5
+  long_break_minutes: 20
+  long_break_every_focus_sessions: 3
+  scope: global
+
+reminders:
+  pre_start:
+    count: 1
+    minutes_before_start: 5
+  unacknowledged_behavior:
+    repeat_indefinitely: true
+  escalation:
+    enabled: true
+    frequency_increase: moderate
+    wording_variation: true
+  suppression:
+    on_next_activity_start: true
+    mark_previous_not_done: true
+
+notifications:
+  alert_types: [short_sound, youtube_clip, spoken_contextual]
+  voice:
+    voice_id: en-US-AriaNeural
+    vary_phrasing_by_event: true
+  quiet_hours:
+    - start: "22:00"
+      end: "07:00"
+  scope: selective
+  actions: [ack, snooze, skip]
+  repeat:
+    until_acknowledged: true
+    max_repeats: unbounded
+
+acknowledgements:
+  mode: per_activity
+  quick_actions: [snooze, skip]
+  snooze:
+    temporary_only: true
+    shifts_schedule: false
+
+dashboard:
+  widgets: [current_timer, day_progress, next_activity, overdue_missed_count]
+
+keybindings:
+  style: vim_like
+  mappings:
+    ack: a
+    snooze: s
+    skip: x
+    next_panel: l
+    prev_panel: h
+
+visual:
+  color_coded: true
+  status_heavy: true
