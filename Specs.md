@@ -10,6 +10,24 @@
   - Start: `11:30`
   - End: `18:00` (hard stop)
 
+## 1.1 Personal Appointments (Recurring + Daily One-Offs)
+- Goal: Reserve personal appointments that are injected into the fixed schedule and block overlaps.
+- Recurring appointments:
+  - Stored in the config file.
+  - Each recurring appointment declares:
+    - `id`, `title`, `start`, `end`
+    - `days_of_week` (one or more of `mon`..`sun`)
+    - Optional `requires_ack` override.
+  - Recurring appointments are merged into the day’s schedule before reminders are computed.
+- Daily one-off appointments:
+  - Collected by prompting the user when the app opens each day.
+  - Prompted appointments are treated like same-day, non-recurring blocks.
+  - If a one-off appointment would violate the day window or overlap, it must be rejected with a clear reason.
+  - One-off appointments are not persisted to config; they are stored in daily runtime state/history only.
+- Priority/ordering:
+  - Recurring and one-off appointments have the same no-overlap enforcement as scheduled activities.
+  - If a conflict exists between a template activity and a personal appointment, the appointment takes precedence and the activity is marked **not done**.
+
 ## 2. Pomodoro System
 - Default focus/break: `25` minutes focus / `5` minutes break.
 - Scope: Global (same for all activities).
