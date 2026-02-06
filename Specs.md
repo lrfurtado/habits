@@ -14,6 +14,11 @@
 - Default focus/break: `25` minutes focus / `5` minutes break.
 - Scope: Global (same for all activities).
 - Long break: `20` minutes after every `3` focus sessions.
+- Long-break self-care plan:
+  - The system loads a configurable **set of self-care activities** from the config file.
+  - At each long break, the system selects one activity from this set.
+  - Every configured self-care activity must be completable within the configured long-break duration.
+  - Spoken/contextual notification text for the selected activity may append an encouragement phrase at the end.
 
 ## 3. Reminder Behavior
 - Pre-start reminders: `1` reminder, `5` minutes before start.
@@ -77,3 +82,13 @@
 - ❌ Calendar integration (Apple / Google)
 - ❌ Habit streak tracking
 - ❌ Ambient sounds or focus music
+
+## 11. Long-Break Self-Care Configuration Contract
+- Config must define a dedicated `long_break_self_care` block.
+- The block includes:
+  - `activities`: a non-empty list of candidate activities/messages to perform during long break.
+  - `selection_strategy`: how to pick the next activity (`random` or deterministic cycle).
+  - `encouragement` settings for optional positive suffixes.
+- Validation rule:
+  - Each configured self-care activity includes a `duration_minutes` value.
+  - `duration_minutes` must be less than or equal to configured `pomodoro.long_break_minutes`.

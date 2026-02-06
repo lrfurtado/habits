@@ -41,6 +41,13 @@
 - **Execution model:** fetch clip URL/stream metadata with `yt-dlp`, then play through `python-vlc`.
 - **Reasoning:** robust handling of YouTube short clips required by spec.
 
+
+### Long-Break Self-Care Message Selection
+- **Config source:** `long_break_self_care.activities` from `ui-config.yaml`.
+- **Selection strategy:** `random` (default) or `cycle` from config to choose the activity at each long break boundary.
+- **Validation contract:** each `activities[*].duration_minutes` must be `<= pomodoro.long_break_minutes` during config load/validation.
+- **Message rendering:** notification generator appends an optional encouragement suffix when `long_break_self_care.encouragement.enabled=true` and phrases are available.
+
 ### Scheduling, Repeats, and Escalation
 - **Scheduler:** `APScheduler`
 - **Usage:**
