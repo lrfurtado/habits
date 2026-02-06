@@ -16,6 +16,24 @@ schedule_templates:
       start: "11:30"
       end: "12:00"
 
+appointments:
+  recurring:
+    - id: therapy
+      title: Therapy Session
+      start: "15:00"
+      end: "15:45"
+      days_of_week: [tue]
+      requires_ack: true
+    - id: pickup
+      title: School Pickup
+      start: "17:00"
+      end: "17:30"
+      days_of_week: [mon, wed, fri]
+  daily_prompt:
+    enabled: true
+    prompt_on_app_open: true
+    max_entries: 5
+
 day_window:
   start: "11:30"
   end: "18:00"

@@ -9,6 +9,7 @@ additionalProperties: false
 required:
   - schedule_templates
   - day_window
+  - appointments
   - pomodoro
   - long_break_self_care
   - reminders
@@ -27,6 +28,31 @@ properties:
         $ref: "#/$defs/activity_list"
       weekend:
         $ref: "#/$defs/activity_list"
+
+  appointments:
+    type: object
+    additionalProperties: false
+    required: [recurring, daily_prompt]
+    properties:
+      recurring:
+        type: array
+        items:
+          $ref: "#/$defs/recurring_appointment"
+      daily_prompt:
+        type: object
+        additionalProperties: false
+        required: [enabled, prompt_on_app_open, max_entries]
+        properties:
+          enabled:
+            type: boolean
+            default: true
+          prompt_on_app_open:
+            type: boolean
+            const: true
+          max_entries:
+            type: integer
+            minimum: 0
+            default: 5
 
   day_window:
     type: object
@@ -338,6 +364,39 @@ $defs:
     type: array
     items:
       $ref: "#/$defs/activity"
+
+  appointment:
+    type: object
+    additionalProperties: false
+    required: [id, title, start, end]
+    properties:
+      id:
+        type: string
+        minLength: 1
+      title:
+        type: string
+        minLength: 1
+      start:
+        $ref: "#/$defs/time_hhmm"
+      end:
+        $ref: "#/$defs/time_hhmm"
+      requires_ack:
+        type: boolean
+        default: true
+
+  recurring_appointment:
+    allOf:
+      - $ref: "#/$defs/appointment"
+      - type: object
+        required: [days_of_week]
+        properties:
+          days_of_week:
+            type: array
+            minItems: 1
+            uniqueItems: true
+            items:
+              type: string
+              enum: [mon, tue, wed, thu, fri, sat, sun]
 
   long_break_self_care_activity:
     type: object
