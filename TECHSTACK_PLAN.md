@@ -29,8 +29,17 @@
 - **Design:** expose MCP tools/resources for notification preview/testing and message generation while reusing the same internal notification engine.
 
 ### Notifications and Actions
-- **Desktop notifications:** `desktop-notifier`
+- **Architecture:** channel adapter pattern
+  - Keep scheduling/escalation/ack logic in a channel-agnostic orchestration layer.
+  - Implement delivery platforms as pluggable adapters behind a shared interface (`send`, `cancel`, `capabilities`, callback normalization).
+  - Configure channel routing per user and optionally per notification type.
+  - Define a normalized notification payload schema (`notification_id`, `activity_id`, `event_type`, escalation stage, actions, media fields) before handing off to channels.
+  - Require adapter callbacks to map platform-specific payloads/webhooks into normalized actions for orchestration.
+- **MVP channel:** Desktop notifications via `desktop-notifier`
   - Cross-platform support and actionable buttons (`Ack`, `Snooze`, `Skip`) with callback handlers.
+- **Future channels:** WhatsApp and Telegram adapters
+  - Add adapters later without changing orchestration or JSON-RPC surface.
+  - Candidate integrations: WhatsApp Cloud API and Telegram Bot API adapters behind the same contract.
 - **Audio playback:** `python-vlc`
   - Plays short alert sounds and recorded clips (including local media or stream URLs).
 - **Speech synthesis (same voice, varied phrasing):** `edge-tts`
