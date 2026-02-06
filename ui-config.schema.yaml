@@ -10,6 +10,7 @@ required:
   - schedule_templates
   - day_window
   - pomodoro
+  - long_break_self_care
   - reminders
   - notifications
   - acknowledgements
@@ -66,10 +67,43 @@ properties:
         type: integer
         minimum: 1
         default: 3
+      # Cross-field rule enforced by app: each long_break_self_care.activities[*].duration_minutes
+      # must be <= long_break_minutes.
       scope:
         type: string
         enum: [global]
         default: global
+
+  long_break_self_care:
+    type: object
+    additionalProperties: false
+    required:
+      - activities
+      - selection_strategy
+      - encouragement
+    properties:
+      activities:
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/$defs/long_break_self_care_activity"
+      selection_strategy:
+        type: string
+        enum: [random, cycle]
+        default: random
+      encouragement:
+        type: object
+        additionalProperties: false
+        required: [enabled, phrases]
+        properties:
+          enabled:
+            type: boolean
+            default: true
+          phrases:
+            type: array
+            items:
+              type: string
+              minLength: 1
 
   reminders:
     type: object
@@ -304,3 +338,18 @@ $defs:
     type: array
     items:
       $ref: "#/$defs/activity"
+
+  long_break_self_care_activity:
+    type: object
+    additionalProperties: false
+    required: [id, message, duration_minutes]
+    properties:
+      id:
+        type: string
+        minLength: 1
+      message:
+        type: string
+        minLength: 1
+      duration_minutes:
+        type: integer
+        minimum: 1

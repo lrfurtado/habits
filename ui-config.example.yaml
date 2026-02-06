@@ -28,6 +28,26 @@ pomodoro:
   long_break_every_focus_sessions: 3
   scope: global
 
+
+long_break_self_care:
+  activities:
+    - id: hydrate
+      message: Drink a glass of water and stretch your shoulders.
+      duration_minutes: 5
+    - id: breathing
+      message: Do a guided 4-4-4 breathing cycle for two minutes.
+      duration_minutes: 3
+    - id: quick_walk
+      message: Take a short walk around the room and reset posture.
+      duration_minutes: 7
+  selection_strategy: random
+  encouragement:
+    enabled: true
+    phrases:
+      - You're doing great—keep it up!
+      - Nice consistency, one step at a time.
+      - Great work showing up for yourself today.
+
 reminders:
   pre_start:
     count: 1
