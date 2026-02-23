@@ -1,0 +1,40 @@
+name: Release on version tag
+
+on:
+  push:
+    tags:
+      - 'V*'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'V')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate semantic version tag (VMAJOR.MINOR.PATCH)
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [[ ! "$TAG" =~ ^V[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag '$TAG' does not match expected format VMAJOR.MINOR.PATCH"
+            exit 1
+          fi
+
+      - name: Create project tarball
+        run: |
+          TAR_NAME="habits-${GITHUB_REF_NAME}.tar.gz"
+          tar --exclude-vcs -czf "$TAR_NAME" .
+          echo "TAR_NAME=$TAR_NAME" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          files: ${{ env.TAR_NAME }}
+          generate_release_notes: true
