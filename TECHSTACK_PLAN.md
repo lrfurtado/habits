@@ -1,13 +1,13 @@
 # Tech Stack Plan
 
 ## TUI Core
-- **Language:** Go
-- **CLI Framework:** `github.com/spf13/cobra`
-- **TUI Framework:** `github.com/charmbracelet/bubbletea`
-- **TUI Components:** `github.com/charmbracelet/bubbles`
-- **Styling:** `github.com/charmbracelet/lipgloss`
-- **Logging:** `go.uber.org/zap`
-- **Storage:** SQLite via `github.com/mattn/go-sqlite3`
+- **Language:** Python 3.12+
+- **CLI Framework:** `typer`
+- **TUI Framework:** `textual`
+- **TUI Components:** `textual` built-in widgets + `textual-dev` tooling
+- **Styling:** `textual` CSS + `rich`
+- **Logging:** `loguru`
+- **Storage:** SQLite via standard-library `sqlite3` (or `sqlmodel` if ORM ergonomics are needed)
 
 ## Notification Module (from current spec)
 
@@ -21,7 +21,7 @@
 - **Python JSON-RPC libs:**
   - `jsonrpcserver` (server-side routing)
   - `jsonrpcclient` (if client calls are needed)
-- **Reasoning:** aligns with the spec requirement to communicate over JSON-RPC on stdio between Go TUI and notification process.
+- **Reasoning:** aligns with the spec requirement to communicate over JSON-RPC on stdio between the Python TUI runtime and notification process.
 
 ### MCP Server Capability
 - **Protocol:** Model Context Protocol server implemented in the same Python process
@@ -64,6 +64,11 @@
 
 ### Suggested Python Dependency Set
 ```txt
+typer
+textual
+rich
+loguru
+sqlmodel
 mcp
 jsonrpcserver
 desktop-notifier
@@ -74,8 +79,8 @@ yt-dlp
 pydantic
 ```
 
-### Integration Contract with Go TUI
-- Go process is the source of truth for schedule/timer state.
+### Integration Contract with Python TUI
+- Python TUI process is the source of truth for schedule/timer state.
 - Python notification process receives events/commands over JSON-RPC stdio, for example:
   - `schedule_reminder(activity_id, starts_at, policy)`
   - `cancel_activity(activity_id)`
