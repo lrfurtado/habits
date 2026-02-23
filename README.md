@@ -1,64 +1,43 @@
-# UI Config Schema Validation
+# Habits — Fixed-Schedule Focus & Reminder System
 
-This repo includes:
+This repository now contains an implementation scaffold for the specifications in `Specs.md`, with configuration validated against `ui-config.schema.yaml`.
 
-- `ui-config.schema.yaml` — the configuration schema (JSON Schema Draft 2020-12, written in YAML).
-- `ui-config.example.yaml` — an example config expected to pass validation.
+## Project layout
 
-## 1) Quick syntax check (no extra dependencies)
+- `src/habits/` — application source code, intentionally split into modules for parallel agent work.
+  - `config.py` — schema + business-rule validation.
+  - `scheduler.py` — fixed-schedule generation and overlap enforcement.
+  - `pomodoro.py` — long-break self-care selection.
+  - `reminders.py` — reminder generation with escalation levels.
+  - `notifications/` — channel contract, desktop adapter, orchestration.
+  - `rpc/notification_server.py` — JSON-RPC over stdio notification service.
+  - `tui.py` — terminal dashboard rendering.
+  - `history.py` / `reporting.py` — persistent history and JSON summary export.
+- `tests/` — baseline tests for schema validation + scheduling behavior.
+- `requirements.txt` / `requirements-dev.txt` — runtime and development dependencies.
+- `justfile` — common development, run, test, and export tasks.
 
-Use Ruby's built-in YAML parser to verify both files are valid YAML:
-
-```bash
-ruby -e 'require "yaml"; %w[ui-config.schema.yaml ui-config.example.yaml].each { |f| YAML.load_file(f) }; puts "YAML syntax OK"'
-```
-
-This only checks YAML syntax, not schema compliance.
-
-## 2) Full schema validation (when validator tooling is available)
-
-Use any JSON Schema Draft 2020-12 validator that supports YAML input.
-
-### Option A: `ajv` CLI
-
-If `ajv` is already available in your environment:
+## Quick start
 
 ```bash
-ajv validate --spec=draft2020 -s ui-config.schema.yaml -d ui-config.example.yaml
+python -m pip install -r requirements-dev.txt
+just test
+just run
 ```
 
-### Option B: Python (`PyYAML` + `jsonschema`)
+## Useful commands (via `just`)
 
-If you already have `PyYAML` and `jsonschema` installed:
-
-```bash
-python - <<'PY'
-import yaml
-from jsonschema import Draft202012Validator
-
-with open('ui-config.schema.yaml', 'r', encoding='utf-8') as f:
-    schema = yaml.safe_load(f)
-with open('ui-config.example.yaml', 'r', encoding='utf-8') as f:
-    config = yaml.safe_load(f)
-
-Draft202012Validator.check_schema(schema)
-Draft202012Validator(schema).validate(config)
-print('Schema validation OK')
-PY
-```
-
-## 3) Validate your own config file
-
-Replace `ui-config.example.yaml` with your config path in the commands above.
-
-Example (`my-config.yaml`):
-
-```bash
-ajv validate --spec=draft2020 -s ui-config.schema.yaml -d my-config.yaml
-```
+- `just install` — install runtime dependencies.
+- `just dev-install` — install runtime + dev dependencies.
+- `just validate-config` — run app startup path with config/schema validation.
+- `just test` — execute test suite.
+- `just run` — start the TUI flow.
+- `just notification-server` — run JSON-RPC notification server over stdio.
+- `just export-daily` / `just export-weekly` — write JSON summary outputs.
 
 ## Notes
 
-- The schema is intentionally strict (`additionalProperties: false` in most sections) to catch unexpected keys early.
-- Time fields are expected in `HH:MM` 24-hour format.
-- `notifications.repeat.max_repeats` accepts either a positive integer or the string `unbounded`.
+- The scheduler enforces fixed windows and rejects overlaps.
+- Appointments (recurring + one-off) are treated with precedence over template activities.
+- History is append-only JSONL and summaries are exported as JSON.
+- Notification routing is channel-based and currently ships with a desktop channel for MVP.
